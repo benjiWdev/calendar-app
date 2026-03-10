@@ -30,10 +30,6 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     // Server-only — populated from .env
-    dbHost: '',
-    dbPort: '',
-    dbUser: '',
-    dbPassword: '',
-    dbName: '',
+    databaseUrl: process.env.DATABASE_URL ?? '',
   },
 })

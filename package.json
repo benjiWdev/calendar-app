@@ -14,8 +14,8 @@
   "dependencies": {
     "@fontsource/nunito": "^5.2.7",
     "@mdi/font": "^7.4.47",
-    "mysql2": "^3.9.7",
     "nuxt": "^3.11.2",
+    "pg": "^8.20.0",
     "vue": "^3.4.27",
     "vuetify": "^4.0.1"
   },
@@ -29,6 +29,7 @@
   "devDependencies": {
     "@nuxt/eslint": "^1.0.0",
     "@types/node": "^20.12.12",
+    "@types/pg": "^8.18.0",
     "eslint": "^9.3.0",
     "typescript": "^5.4.5",
     "typescript-eslint": "^8.0.0",

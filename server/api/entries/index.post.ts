@@ -1,4 +1,3 @@
-import type { ResultSetHeader, RowDataPacket } from 'mysql2'
 import { getPool } from '~/server/utils/db'
 import type { CalendarEntry, CreateEntryPayload } from '~/types'
 
@@ -14,9 +13,9 @@ export default defineEventHandler(async (event): Promise<CalendarEntry> => {
 
   const pool = getPool()
 
-  const [result] = await pool.execute<ResultSetHeader>(
+  const insertResult = await pool.query(
     `INSERT INTO calendar_entries (title, description, start_date, start_time, end_date, end_time)
-     VALUES (?, ?, ?, ?, ?, ?)`,
+     VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
     [
       body.title.trim(),
       body.description?.trim() || null,
@@ -27,12 +26,12 @@ export default defineEventHandler(async (event): Promise<CalendarEntry> => {
     ],
   )
 
-  const insertId = result.insertId
+  const insertId = insertResult.rows[0].id
 
-  const [rows] = await pool.query<RowDataPacket[]>(
-    'SELECT * FROM calendar_entries WHERE id = ?',
+  const result = await pool.query(
+    'SELECT * FROM calendar_entries WHERE id = $1',
     [insertId],
   )
 
-  return rows[0] as unknown as CalendarEntry
+  return result.rows[0] as CalendarEntry
 })

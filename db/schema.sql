@@ -1,21 +1,15 @@
--- Run this against your MariaDB instance once to create the required table.
--- Example: mysql -u root -p calendar < db/schema.sql
-
-CREATE DATABASE IF NOT EXISTS calendar
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
-
-USE calendar;
+-- Run this against your PostgreSQL instance once to create the required table.
+-- Example: psql -U postgres -d calendar -f db/schema.sql
 
 CREATE TABLE IF NOT EXISTS calendar_entries (
-  id          INT            NOT NULL AUTO_INCREMENT,
+  id          SERIAL         PRIMARY KEY,
   title       VARCHAR(255)   NOT NULL,
-  description VARCHAR(1000)      NULL,
+  description VARCHAR(1000),
   start_date  DATE           NOT NULL,
-  start_time  TIME               NULL,
-  end_date    DATE               NULL,
-  end_time    TIME               NULL,
-  created_at  TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (id),
-  INDEX idx_start_date (start_date)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  start_time  TIME,
+  end_date    DATE,
+  end_time    TIME,
+  created_at  TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_start_date ON calendar_entries (start_date);
