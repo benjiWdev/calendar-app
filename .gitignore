@@ -1,0 +1,21 @@
+# Nuxt
+.nuxt/
+.output/
+dist/
+
+# Env — never commit secrets
+.env
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# claude
+.claude/
+agents.md

@@ -1,0 +1,7 @@
+{
+  // Nuxt generates .nuxt/tsconfig.json at prepare time — extend it here
+  "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    "strict": true
+  }
+}
