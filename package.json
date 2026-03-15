@@ -9,7 +9,10 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "migrate": "node-pg-migrate -d NUXT_DATABASE_URL --envPath .env up",
+    "migrate:down": "node-pg-migrate -d NUXT_DATABASE_URL --envPath .env down",
+    "migrate:create": "node-pg-migrate -j sql create"
   },
   "dependencies": {
     "@fontsource/nunito": "^5.2.7",
@@ -31,6 +34,7 @@
     "@types/node": "^20.12.12",
     "@types/pg": "^8.18.0",
     "eslint": "^9.3.0",
+    "node-pg-migrate": "^8.0.4",
     "typescript": "^5.4.5",
     "typescript-eslint": "^8.0.0",
     "vite-plugin-vuetify": "^2.0.3"

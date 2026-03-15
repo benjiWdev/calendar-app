@@ -14,15 +14,13 @@ export default defineEventHandler(async (event): Promise<CalendarEntry> => {
   const pool = getPool()
 
   const insertResult = await pool.query(
-    `INSERT INTO calendar_entries (title, description, start_date, start_time, end_date, end_time)
-     VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+    `INSERT INTO calendar_entries (title, description, start_date, end_date)
+     VALUES ($1, $2, $3, $4) RETURNING id`,
     [
       body.title.trim(),
       body.description?.trim() || null,
       body.start_date,
-      body.start_time || null,
       body.end_date || null,
-      body.end_time || null,
     ],
   )
 

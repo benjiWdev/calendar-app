@@ -1,6 +1,4 @@
--- SUPERSEDED — do not run this file manually.
--- Schema is now managed by node-pg-migrate. Run: pnpm migrate
--- This file is kept as a human-readable reference only.
+-- Up Migration
 
 CREATE TABLE IF NOT EXISTS calendar_entries (
   id          SERIAL         PRIMARY KEY,
@@ -12,3 +10,8 @@ CREATE TABLE IF NOT EXISTS calendar_entries (
 );
 
 CREATE INDEX IF NOT EXISTS idx_start_date ON calendar_entries (start_date);
+
+-- Down Migration
+
+DROP INDEX IF EXISTS idx_start_date;
+DROP TABLE IF EXISTS calendar_entries;

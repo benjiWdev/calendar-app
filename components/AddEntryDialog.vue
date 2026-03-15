@@ -44,7 +44,7 @@
           />
 
           <v-row class="mb-3" no-gutters>
-            <v-col cols="7" class="pr-2">
+            <v-col cols="6" class="pr-2">
               <v-text-field
                 v-model="form.start_date"
                 label="Start date"
@@ -54,32 +54,11 @@
                 density="comfortable"
               />
             </v-col>
-            <v-col cols="5">
-              <v-text-field
-                v-model="form.start_time"
-                label="Start time (optional)"
-                type="time"
-                variant="outlined"
-                density="comfortable"
-              />
-            </v-col>
-          </v-row>
-
-          <v-row no-gutters>
-            <v-col cols="7" class="pr-2">
+            <v-col cols="6">
               <v-text-field
                 v-model="form.end_date"
                 label="End date (optional)"
                 type="date"
-                variant="outlined"
-                density="comfortable"
-              />
-            </v-col>
-            <v-col cols="5">
-              <v-text-field
-                v-model="form.end_time"
-                label="End time (optional)"
-                type="time"
                 variant="outlined"
                 density="comfortable"
               />
@@ -126,9 +105,7 @@ const form = reactive<CreateEntryPayload>({
   title: '',
   description: '',
   start_date: '',
-  start_time: '',
   end_date: '',
-  end_time: '',
 })
 
 function resetForm(): void {
@@ -136,9 +113,7 @@ function resetForm(): void {
   form.title = ''
   form.description = ''
   form.start_date = ''
-  form.start_time = ''
   form.end_date = ''
-  form.end_time = ''
   errorMsg.value = null
 }
 
@@ -161,9 +136,7 @@ async function submit(): Promise<void> {
         title: form.title,
         description: form.description || undefined,
         start_date: form.start_date,
-        start_time: form.start_time || undefined,
         end_date: form.end_date || undefined,
-        end_time: form.end_time || undefined,
       } satisfies Partial<CreateEntryPayload>,
     })
 
