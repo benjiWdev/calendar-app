@@ -64,6 +64,27 @@
               />
             </v-col>
           </v-row>
+
+          <v-select
+            v-model="form.elements"
+            :items="ELEMENT_OPTIONS"
+            label="Elements"
+            :rules="[(v: ElementName[]) => v.length > 0 || 'At least one element is required']"
+            variant="outlined"
+            density="comfortable"
+            multiple
+            chips
+            closable-chips
+          >
+            <template #chip="{ item, props: chipProps }">
+              <v-chip
+                v-bind="chipProps"
+                :style="{ backgroundColor: ELEMENT_COLORS[item as ElementName], color: '#fff' }"
+              >
+                {{ item }}
+              </v-chip>
+            </template>
+          </v-select>
         </v-form>
       </v-card-text>
 
@@ -88,7 +109,15 @@
 
 <script setup lang="ts">
 import type { VForm } from 'vuetify/components'
-import type { CreateEntryPayload } from '~/types'
+import type { CreateEntryPayload, ElementName } from '~/types'
+
+const ELEMENT_OPTIONS: ElementName[] = ['Magazzino', 'Colmata', 'Kuhstall']
+
+const ELEMENT_COLORS: Record<ElementName, string> = {
+  Magazzino: '#5C6BC0',
+  Colmata: '#26A69A',
+  Kuhstall: '#FFA726',
+}
 
 const emit = defineEmits<{
   created: []
@@ -101,11 +130,12 @@ const formRef = ref<InstanceType<typeof VForm> | null>(null)
 const loading = ref(false)
 const errorMsg = ref<string | null>(null)
 
-const form = reactive<CreateEntryPayload>({
+const form = reactive<CreateEntryPayload & { elements: ElementName[] }>({
   title: '',
   description: '',
   start_date: '',
   end_date: '',
+  elements: [],
 })
 
 function resetForm(): void {
@@ -114,6 +144,7 @@ function resetForm(): void {
   form.description = ''
   form.start_date = ''
   form.end_date = ''
+  form.elements = []
   errorMsg.value = null
 }
 
@@ -137,6 +168,7 @@ async function submit(): Promise<void> {
         description: form.description || undefined,
         start_date: form.start_date,
         end_date: form.end_date || undefined,
+        elements: form.elements,
       } satisfies Partial<CreateEntryPayload>,
     })
 

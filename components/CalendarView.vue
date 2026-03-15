@@ -63,8 +63,8 @@
               <v-chip
                 v-bind="tooltipProps"
                 size="x-small"
-                color="primary"
                 class="entry-chip mb-1"
+                :style="getChipStyle(entry)"
                 label
               >
                 <span class="entry-chip-text">{{ entry.title }}</span>
@@ -72,6 +72,9 @@
             </template>
             <div>
               <strong>{{ entry.title }}</strong>
+              <div v-if="entry.elements?.length" class="text-body-small">
+                {{ entry.elements.join(', ') }}
+              </div>
               <div v-if="entry.description" class="text-body-small">
                 {{ entry.description }}
               </div>
@@ -98,7 +101,22 @@
 </template>
 
 <script setup lang="ts">
-import type { CalendarEntry } from '~/types'
+import type { CalendarEntry, ElementName } from '~/types'
+
+const ELEMENT_COLORS: Record<ElementName, string> = {
+  Magazzino: '#5C6BC0',
+  Colmata: '#26A69A',
+  Kuhstall: '#FFA726',
+}
+
+function getChipStyle(entry: CalendarEntry): Record<string, string> {
+  const colors = (entry.elements ?? []).map((e) => ELEMENT_COLORS[e]).filter(Boolean)
+  if (colors.length === 0) return {}
+  if (colors.length === 1) return { backgroundColor: colors[0]!, color: '#fff' }
+  const step = 100 / colors.length
+  const stops = colors.flatMap((c, i) => [`${c} ${i * step}%`, `${c} ${(i + 1) * step}%`])
+  return { background: `linear-gradient(90deg, ${stops.join(', ')})`, color: '#fff' }
+}
 
 const props = defineProps<{
   entries: CalendarEntry[]
