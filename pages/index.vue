@@ -3,7 +3,6 @@
     <!-- Page header -->
     <div class="d-flex align-center mb-5">
       <div>
-        <h2 class="text-headline-medium font-weight-bold">My Calendar</h2>
         <p class="text-body-medium text-medium-emphasis mb-0">
           {{ today }}
         </p>

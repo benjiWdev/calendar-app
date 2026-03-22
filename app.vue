@@ -4,7 +4,7 @@
       <template #prepend>
         <v-icon icon="mdi-calendar-month" class="ml-3" />
       </template>
-      <v-app-bar-title class="font-weight-bold">Calendar App</v-app-bar-title>
+      <v-app-bar-title class="font-weight-bold">Toskana Planer</v-app-bar-title>
     </v-app-bar>
 
     <v-main>
