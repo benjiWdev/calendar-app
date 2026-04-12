@@ -33,7 +33,7 @@
     </v-alert>
 
     <!-- Calendar -->
-    <CalendarView :entries="entries" />
+    <CalendarView :entries="entries" @edit="openEdit" />
 
     <!-- Mobile FAB -->
     <v-btn
@@ -49,6 +49,14 @@
 
     <!-- Add Entry dialog -->
     <AddEntryDialog v-model="showDialog" @created="refresh" />
+
+    <!-- Edit Entry dialog -->
+    <EditEntryDialog
+      v-model="showEditDialog"
+      :entry="selectedEntry"
+      @updated="refresh"
+      @deleted="refresh"
+    />
   </v-container>
 </template>
 
@@ -56,6 +64,13 @@
 import type { CalendarEntry } from '~/types'
 
 const showDialog = ref(false)
+const showEditDialog = ref(false)
+const selectedEntry = ref<CalendarEntry | null>(null)
+
+function openEdit(entry: CalendarEntry): void {
+  selectedEntry.value = entry
+  showEditDialog.value = true
+}
 
 const today = new Date().toLocaleDateString('de-DE', {
   weekday: 'long',

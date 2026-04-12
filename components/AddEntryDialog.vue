@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" max-width="520" persistent>
+  <v-dialog v-model="dialog" max-width="520">
     <v-card rounded="lg">
       <v-card-title class="text-headline-small pa-4 d-flex align-center">
         <v-icon icon="mdi-calendar-plus" class="mr-2" color="primary" />
@@ -20,83 +20,21 @@
           {{ errorMsg }}
         </v-alert>
 
-        <v-form ref="formRef" @submit.prevent="submit">
-          <v-text-field
-            v-model="form.title"
-            label="Titel"
-            placeholder="z.B. Teambesprechung"
-            :rules="[(v) => !!v?.trim() || 'Titel ist erforderlich']"
-            variant="outlined"
-            density="comfortable"
-            class="mb-3"
-            autofocus
-          />
-
-          <v-textarea
-            v-model="form.description"
-            label="Beschreibung (optional)"
-            placeholder="Details hinzufügen…"
-            variant="outlined"
-            density="comfortable"
-            rows="3"
-            auto-grow
-            class="mb-3"
-          />
-
-          <v-row class="mb-3" no-gutters>
-            <v-col cols="6" class="pr-2">
-              <v-text-field
-                v-model="form.start_date"
-                label="Startdatum"
-                type="date"
-                :rules="[(v) => !!v || 'Startdatum ist erforderlich']"
-                variant="outlined"
-                density="comfortable"
-              />
-            </v-col>
-            <v-col cols="6">
-              <v-text-field
-                v-model="form.end_date"
-                label="Enddatum"
-                type="date"
-                :rules="[
-                  (v) => !!v || 'Enddatum ist erforderlich',
-                  (v) => !form.start_date || v >= form.start_date || 'Enddatum darf nicht vor dem Startdatum liegen',
-                ]"
-                variant="outlined"
-                density="comfortable"
-              />
-            </v-col>
-          </v-row>
-
-          <v-select
-            v-model="form.elements"
-            :items="ELEMENT_OPTIONS"
-            label="Elemente"
-            :rules="[(v: ElementName[]) => v.length > 0 || 'Mindestens ein Element ist erforderlich']"
-            variant="outlined"
-            density="comfortable"
-            multiple
-            chips
-            closable-chips
-          >
-            <template #chip="{ item, props: chipProps }">
-              <v-chip
-                v-bind="chipProps"
-                :style="{ backgroundColor: ELEMENT_COLORS[item as ElementName], color: '#fff' }"
-              >
-                {{ item }}
-              </v-chip>
-            </template>
-          </v-select>
-        </v-form>
+        <EntryForm
+          ref="entryFormRef"
+          v-model:title="form.title"
+          v-model:description="form.description"
+          v-model:start_date="form.start_date"
+          v-model:end_date="form.end_date"
+          v-model:elements="form.elements"
+        />
       </v-card-text>
 
       <v-divider />
 
       <v-card-actions class="pa-4">
         <v-spacer />
-        <v-btn variant="text" :disabled="loading" @click="close">Abbrechen</v-btn>
+        <v-btn color="primary" variant="outlined" :disabled="loading" @click="close">Abbrechen</v-btn>
         <v-btn
           color="primary"
           variant="elevated"
@@ -112,54 +50,29 @@
 </template>
 
 <script setup lang="ts">
-import type { VForm } from 'vuetify/components'
-import type { CreateEntryPayload, ElementName } from '~/types'
+import type { CreateEntryPayload } from '~/types'
 
-const ELEMENT_OPTIONS: ElementName[] = ['Magazzino', 'Colmata', 'Kuhstall']
-
-const ELEMENT_COLORS: Record<ElementName, string> = {
-  Magazzino: '#5C6BC0',
-  Colmata: '#26A69A',
-  Kuhstall: '#FFA726',
+type EntryFormInstance = {
+  validate(): Promise<{ valid: boolean } | undefined>
+  resetValidation(): void
 }
 
-const emit = defineEmits<{
-  created: []
-}>()
+const emit = defineEmits<{ created: [] }>()
 
-/** Two-way binding for v-model on the parent */
 const dialog = defineModel<boolean>({ default: false })
 
-const formRef = ref<InstanceType<typeof VForm> | null>(null)
-const loading = ref(false)
-const errorMsg = ref<string | null>(null)
-
-const form = reactive<CreateEntryPayload & { elements: ElementName[] }>({
-  title: '',
-  description: '',
-  start_date: '',
-  end_date: '',
-  elements: [],
-})
-
-function resetForm(): void {
-  formRef.value?.reset()
-  form.title = ''
-  form.description = ''
-  form.start_date = ''
-  form.end_date = ''
-  form.elements = []
-  errorMsg.value = null
-}
+const entryFormRef = ref<EntryFormInstance | null>(null)
+const { form, loading, errorMsg, resetForm, toISODate, extractErrorMessage } = useEntryForm()
 
 function close(): void {
   dialog.value = false
   resetForm()
+  entryFormRef.value?.resetValidation()
 }
 
 async function submit(): Promise<void> {
-  const { valid } = await formRef.value!.validate()
-  if (!valid) return
+  const result = await entryFormRef.value?.validate()
+  if (!result?.valid) return
 
   loading.value = true
   errorMsg.value = null
@@ -170,21 +83,18 @@ async function submit(): Promise<void> {
       body: {
         title: form.title,
         description: form.description || undefined,
-        start_date: form.start_date,
-        end_date: form.end_date,
+        start_date: toISODate(form.start_date!),
+        end_date: toISODate(form.end_date!),
         elements: form.elements,
       } satisfies Partial<CreateEntryPayload>,
     })
-
     emit('created')
     close()
   } catch (err: unknown) {
-    const msg =
-      err instanceof Error
-        ? err.message
-        : (err as { data?: { message?: string } })?.data?.message ??
-          'Eintrag konnte nicht gespeichert werden. Bitte erneut versuchen.'
-    errorMsg.value = msg
+    errorMsg.value = extractErrorMessage(
+      err,
+      'Eintrag konnte nicht gespeichert werden. Bitte erneut versuchen.',
+    )
   } finally {
     loading.value = false
   }

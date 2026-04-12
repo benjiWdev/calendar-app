@@ -1,4 +1,4 @@
-import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
+import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
 
 export default defineNuxtConfig({
   ssr: false,
@@ -6,17 +6,24 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   build: {
-    transpile: ['vuetify'],
+    transpile: ["vuetify"],
   },
 
   modules: [
-    '@nuxt/eslint',
+    "@nuxt/eslint",
     (_options, nuxt) => {
-      nuxt.hooks.hook('vite:extendConfig', (config) => {
+      nuxt.hooks.hook("vite:extendConfig", (config) => {
         // vuetify() returns a Plugin[] which is assignable to the vite PluginOption type
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ;(config.plugins as any[]).push(vuetify({ autoImport: true }))
-      })
+        (config.plugins as any[]).push(
+          vuetify({
+            autoImport: true,
+            styles: {
+              configFile: "/styles/settings.scss",
+            },
+          }),
+        );
+      });
     },
   ],
 
@@ -30,6 +37,6 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     // Server-only — populated from .env
-    databaseUrl: process.env.DATABASE_URL ?? '',
+    databaseUrl: process.env.DATABASE_URL ?? "",
   },
-})
+});

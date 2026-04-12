@@ -93,6 +93,7 @@
                 top: `${bar.row * BAR_ROW_HEIGHT}px`,
                 ...getBarStyle(bar.entry),
               }"
+              @click.stop="emit('edit', bar.entry)"
             >
               <span v-if="bar.isStart || bar.startCol === 0" class="bar-text">
                 {{ bar.entry.title }}
@@ -118,16 +119,12 @@
 </template>
 
 <script setup lang="ts">
-import type { CalendarEntry, ElementName } from '~/types'
+import type { CalendarEntry } from '~/types'
+import { ELEMENT_COLORS } from '~/constants/elements'
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
 const DAY_NAMES = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'] as const
-const ELEMENT_COLORS: Record<ElementName, string> = {
-  Magazzino: '#5C6BC0',
-  Colmata: '#26A69A',
-  Kuhstall: '#FFA726',
-}
 /** Pixel height of the day-number row at the top of each week row. */
 const DAY_NUM_HEIGHT = 32
 /** Pixel height allocated per event-bar lane. */
@@ -138,6 +135,8 @@ const WEEK_BOTTOM_PAD = 8
 // ── Props ────────────────────────────────────────────────────────────────────
 
 const props = defineProps<{ entries: CalendarEntry[] }>()
+
+const emit = defineEmits<{ edit: [entry: CalendarEntry] }>()
 
 // ── State ─────────────────────────────────────────────────────────────────────
 

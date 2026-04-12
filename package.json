@@ -17,10 +17,10 @@
   "dependencies": {
     "@fontsource/nunito": "^5.2.7",
     "@mdi/font": "^7.4.47",
-    "nuxt": "^3.11.2",
+    "nuxt": "^4.4.2",
     "pg": "^8.20.0",
-    "vue": "^3.4.27",
-    "vuetify": "^4.0.1"
+    "vue": "^3.5.32",
+    "vuetify": "^3.12.5"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -30,13 +30,14 @@
     ]
   },
   "devDependencies": {
-    "@nuxt/eslint": "^1.0.0",
-    "@types/node": "^20.12.12",
-    "@types/pg": "^8.18.0",
-    "eslint": "^9.3.0",
+    "@nuxt/eslint": "^1.15.2",
+    "@types/node": "^20.19.39",
+    "@types/pg": "^8.20.0",
+    "eslint": "^9.39.4",
     "node-pg-migrate": "^8.0.4",
-    "typescript": "^5.4.5",
-    "typescript-eslint": "^8.0.0",
-    "vite-plugin-vuetify": "^2.0.3"
+    "sass-embedded": "^1.99.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.58.1",
+    "vite-plugin-vuetify": "^2.1.3"
   }
 }
