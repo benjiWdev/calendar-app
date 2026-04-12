@@ -3,7 +3,7 @@
     <v-card rounded="lg">
       <v-card-title class="text-headline-small pa-4 d-flex align-center">
         <v-icon icon="mdi-calendar-plus" class="mr-2" color="primary" />
-        Add Calendar Entry
+        Kalendereintrag hinzufügen
       </v-card-title>
 
       <v-divider />
@@ -23,9 +23,9 @@
         <v-form ref="formRef" @submit.prevent="submit">
           <v-text-field
             v-model="form.title"
-            label="Title"
-            placeholder="e.g. Team meeting"
-            :rules="[(v) => !!v?.trim() || 'Title is required']"
+            label="Titel"
+            placeholder="z.B. Teambesprechung"
+            :rules="[(v) => !!v?.trim() || 'Titel ist erforderlich']"
             variant="outlined"
             density="comfortable"
             class="mb-3"
@@ -34,8 +34,8 @@
 
           <v-textarea
             v-model="form.description"
-            label="Description (optional)"
-            placeholder="Add details…"
+            label="Beschreibung (optional)"
+            placeholder="Details hinzufügen…"
             variant="outlined"
             density="comfortable"
             rows="3"
@@ -47,9 +47,9 @@
             <v-col cols="6" class="pr-2">
               <v-text-field
                 v-model="form.start_date"
-                label="Start date"
+                label="Startdatum"
                 type="date"
-                :rules="[(v) => !!v || 'Start date is required']"
+                :rules="[(v) => !!v || 'Startdatum ist erforderlich']"
                 variant="outlined"
                 density="comfortable"
               />
@@ -57,8 +57,12 @@
             <v-col cols="6">
               <v-text-field
                 v-model="form.end_date"
-                label="End date (optional)"
+                label="Enddatum"
                 type="date"
+                :rules="[
+                  (v) => !!v || 'Enddatum ist erforderlich',
+                  (v) => !form.start_date || v >= form.start_date || 'Enddatum darf nicht vor dem Startdatum liegen',
+                ]"
                 variant="outlined"
                 density="comfortable"
               />
@@ -68,8 +72,8 @@
           <v-select
             v-model="form.elements"
             :items="ELEMENT_OPTIONS"
-            label="Elements"
-            :rules="[(v: ElementName[]) => v.length > 0 || 'At least one element is required']"
+            label="Elemente"
+            :rules="[(v: ElementName[]) => v.length > 0 || 'Mindestens ein Element ist erforderlich']"
             variant="outlined"
             density="comfortable"
             multiple
@@ -92,7 +96,7 @@
 
       <v-card-actions class="pa-4">
         <v-spacer />
-        <v-btn variant="text" :disabled="loading" @click="close">Cancel</v-btn>
+        <v-btn variant="text" :disabled="loading" @click="close">Abbrechen</v-btn>
         <v-btn
           color="primary"
           variant="elevated"
@@ -100,7 +104,7 @@
           prepend-icon="mdi-check"
           @click="submit"
         >
-          Save Entry
+          Eintrag speichern
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -167,7 +171,7 @@ async function submit(): Promise<void> {
         title: form.title,
         description: form.description || undefined,
         start_date: form.start_date,
-        end_date: form.end_date || undefined,
+        end_date: form.end_date,
         elements: form.elements,
       } satisfies Partial<CreateEntryPayload>,
     })
@@ -179,7 +183,7 @@ async function submit(): Promise<void> {
       err instanceof Error
         ? err.message
         : (err as { data?: { message?: string } })?.data?.message ??
-          'Failed to save entry. Please try again.'
+          'Eintrag konnte nicht gespeichert werden. Bitte erneut versuchen.'
     errorMsg.value = msg
   } finally {
     loading.value = false

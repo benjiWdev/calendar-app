@@ -10,6 +10,12 @@ export default defineEventHandler(async (event): Promise<CalendarEntry> => {
   if (!body.start_date) {
     throw createError({ statusCode: 400, message: 'start_date is required' })
   }
+  if (!body.end_date) {
+    throw createError({ statusCode: 400, message: 'end_date is required' })
+  }
+  if (body.end_date < body.start_date) {
+    throw createError({ statusCode: 400, message: 'end_date must not be before start_date' })
+  }
   if (!body.elements?.length) {
     throw createError({ statusCode: 400, message: 'at least one element is required' })
   }
@@ -23,7 +29,7 @@ export default defineEventHandler(async (event): Promise<CalendarEntry> => {
       body.title.trim(),
       body.description?.trim() || null,
       body.start_date,
-      body.end_date || null,
+      body.end_date,
       body.elements ?? [],
     ],
   )

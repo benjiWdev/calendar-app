@@ -15,7 +15,7 @@
         class="d-none d-sm-flex text-blue-lighten-4"
         @click="showDialog = true"
       >
-        Add Entry
+        Eintrag hinzufügen
       </v-btn>
     </div>
 
@@ -25,10 +25,10 @@
       type="error"
       variant="tonal"
       class="mb-4"
-      :text="`Could not load entries: ${fetchError.message}`"
+      :text="`Einträge konnten nicht geladen werden: ${fetchError.message}`"
     >
       <template #append>
-        <v-btn variant="text" size="small" @click="refresh">Retry</v-btn>
+        <v-btn variant="text" size="small" @click="refresh">Erneut versuchen</v-btn>
       </template>
     </v-alert>
 
@@ -57,7 +57,7 @@ import type { CalendarEntry } from '~/types'
 
 const showDialog = ref(false)
 
-const today = new Date().toLocaleDateString('en-US', {
+const today = new Date().toLocaleDateString('de-DE', {
   weekday: 'long',
   year: 'numeric',
   month: 'long',

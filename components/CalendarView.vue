@@ -12,6 +12,16 @@
         {{ monthLabel }}
       </span>
       <v-btn
+        v-if="!isCurrentMonthShown"
+        variant="tonal"
+        density="comfortable"
+        size="small"
+        class="mr-1"
+        @click="goToToday"
+      >
+        Heute
+      </v-btn>
+      <v-btn
         variant="text"
         icon="mdi-chevron-right"
         density="comfortable"
@@ -98,10 +108,7 @@
               {{ bar.entry.description }}
             </div>
             <div class="text-body-small">
-              {{ formatDate(bar.entry.start_date) }}
-              <template v-if="bar.entry.end_date">
-                – {{ formatDate(bar.entry.end_date) }}
-              </template>
+              {{ formatDate(bar.entry.start_date) }} – {{ formatDate(bar.entry.end_date) }}
             </div>
           </div>
         </v-tooltip>
@@ -115,7 +122,7 @@ import type { CalendarEntry, ElementName } from '~/types'
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
-const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const
+const DAY_NAMES = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'] as const
 const ELEMENT_COLORS: Record<ElementName, string> = {
   Magazzino: '#5C6BC0',
   Colmata: '#26A69A',
@@ -155,7 +162,7 @@ function isSameDayOrBefore(a: Date, b: Date): boolean {
 // ── Computed: calendar structure ──────────────────────────────────────────────
 
 const monthLabel = computed(() =>
-  currentDate.value.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+  currentDate.value.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' }),
 )
 
 /** All days shown in the grid, padded to full weeks on both sides. */
@@ -209,16 +216,16 @@ function computeWeekBars(week: Date[]): WeekBar[] {
   // Collect entries that overlap this week
   const relevant = props.entries.filter((entry) => {
     const start = toMidnight(entry.start_date)
-    const end = entry.end_date ? toMidnight(entry.end_date) : start
+    const end = toMidnight(entry.end_date)
     return isSameDayOrBefore(start, weekEnd) && isSameDayOrAfter(end, weekStart)
   })
 
   // Longer spans first so they get lower lane numbers (visual priority)
   relevant.sort((a, b) => {
     const aStart = toMidnight(a.start_date)
-    const aEnd = a.end_date ? toMidnight(a.end_date) : aStart
+    const aEnd = toMidnight(a.end_date)
     const bStart = toMidnight(b.start_date)
-    const bEnd = b.end_date ? toMidnight(b.end_date) : bStart
+    const bEnd = toMidnight(b.end_date)
     const aSpan = Math.round((aEnd.getTime() - aStart.getTime()) / 86400000)
     const bSpan = Math.round((bEnd.getTime() - bStart.getTime()) / 86400000)
     if (bSpan !== aSpan) return bSpan - aSpan
@@ -231,7 +238,7 @@ function computeWeekBars(week: Date[]): WeekBar[] {
 
   for (const entry of relevant) {
     const entryStart = toMidnight(entry.start_date)
-    const entryEnd = entry.end_date ? toMidnight(entry.end_date) : entryStart
+    const entryEnd = toMidnight(entry.end_date)
 
     const startCol = Math.max(
       0,
@@ -311,7 +318,7 @@ function isToday(day: Date): boolean {
 }
 
 function formatDate(isoStr: string): string {
-  return new Date(isoStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  return new Date(isoStr).toLocaleDateString('de-DE', { month: 'short', day: 'numeric' })
 }
 
 // ── Navigation ────────────────────────────────────────────────────────────────
@@ -327,6 +334,18 @@ function nextMonth(): void {
   d.setMonth(d.getMonth() + 1)
   currentDate.value = d
 }
+
+function goToToday(): void {
+  currentDate.value = new Date()
+}
+
+const isCurrentMonthShown = computed(() => {
+  const now = new Date()
+  return (
+    currentDate.value.getMonth() === now.getMonth() &&
+    currentDate.value.getFullYear() === now.getFullYear()
+  )
+})
 </script>
 
 <style scoped>
