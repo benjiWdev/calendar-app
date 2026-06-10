@@ -1,5 +1,22 @@
 <template>
   <v-container fluid class="pa-4 pa-md-6">
+    
+    <!-- Error state -->
+    <v-alert
+      v-if="fetchError"
+      type="error"
+      variant="tonal"
+      class="mb-4"
+      :text="`Einträge konnten nicht geladen werden: ${fetchError.message}`"
+    >
+      <template #append>
+        <v-btn variant="text" size="small" @click="refresh">Erneut versuchen</v-btn>
+      </template>
+    </v-alert>
+
+    <!-- 3-month booking overview -->
+    <MonthOverviewBand :entries="entries" class="mb-5" />
+
     <!-- Page header -->
     <div class="d-flex align-center mb-5">
       <div>
@@ -18,19 +35,6 @@
         Eintrag hinzufügen
       </v-btn>
     </div>
-
-    <!-- Error state -->
-    <v-alert
-      v-if="fetchError"
-      type="error"
-      variant="tonal"
-      class="mb-4"
-      :text="`Einträge konnten nicht geladen werden: ${fetchError.message}`"
-    >
-      <template #append>
-        <v-btn variant="text" size="small" @click="refresh">Erneut versuchen</v-btn>
-      </template>
-    </v-alert>
 
     <!-- Calendar -->
     <CalendarView :entries="entries" @edit="openEdit" />

@@ -28,6 +28,9 @@ components/* (props in, events out)                          calendar_entries ta
 - `pages/index.vue` is the **only** place data is fetched. It passes entries down
   as props and refetches after a dialog reports success.
 - `CalendarView.vue` is a pure display component — props in, no fetching, no emits.
+- `MonthOverviewBand.vue` is also pure-display: it receives the same `entries` prop,
+  keeps its own 3-month window state, and derives the booked day ranges (timeframes)
+  via the `useMonthBookingSummary` composable, rendering them as positioned blocks.
 - Dialogs (`AddEntryDialog.vue`, `EditEntryDialog.vue`) wrap the shared
   `EntryForm.vue` and emit on success.
 
@@ -38,11 +41,14 @@ calendar-app/
 ├── app.vue                  # Root layout (v-app, app bar, NuxtPage)
 ├── pages/index.vue          # Route + data orchestration (useFetch)
 ├── components/
-│   ├── CalendarView.vue     # Pure-display monthly grid
-│   ├── AddEntryDialog.vue   # Create dialog
-│   ├── EditEntryDialog.vue  # Edit/delete dialog
-│   └── EntryForm.vue        # Shared form fields + client validation
-├── composables/useEntryForm.ts  # Reactive form state, reset, ISO-date, error helpers
+│   ├── CalendarView.vue       # Pure-display monthly grid
+│   ├── MonthOverviewBand.vue  # Pure-display 3-month booking overview band
+│   ├── AddEntryDialog.vue     # Create dialog
+│   ├── EditEntryDialog.vue    # Edit/delete dialog
+│   └── EntryForm.vue          # Shared form fields + client validation
+├── composables/
+│   ├── useEntryForm.ts            # Reactive form state, reset, ISO-date, error helpers
+│   └── useMonthBookingSummary.ts  # Pure helper: booked day ranges per element per month
 ├── constants/elements.ts    # Element options + colors
 ├── plugins/vuetify.ts       # Vuetify init (theme, icons, date adapter)
 ├── types/index.ts           # CalendarEntry, CreateEntryPayload, ElementName

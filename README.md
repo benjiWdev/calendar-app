@@ -21,6 +21,7 @@ See [Getting Started](docs/getting-started.md) for prerequisites and details.
 ## Key Features
 
 - **Monthly calendar grid** — custom 7-column layout, week starts Monday.
+- **3-month booking overview** — a band showing three months at a time, with a per-element timeline of the booked day ranges in each month (own ±3-month navigation).
 - **Multi-day entries** — each entry spans every day between its start and end date.
 - **Create / edit / delete** — entries managed through Vuetify dialog forms.
 - **Color-coded elements** — tag entries with Magazzino, Colmata, or Kuhstall.

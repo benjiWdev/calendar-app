@@ -46,7 +46,8 @@ calendar-app/
 ├── constants/
 │   └── elements.ts                  # ELEMENT_OPTIONS + ELEMENT_COLORS
 ├── composables/
-│   └── useEntryForm.ts              # Reactive form state, reset, ISO-date, error helpers
+│   ├── useEntryForm.ts              # Reactive form state, reset, ISO-date, error helpers
+│   └── useMonthBookingSummary.ts    # Pure helper: distinct booked days per element per month
 ├── plugins/
 │   └── vuetify.ts                   # Vuetify init: components, MDI icons, date adapter, light theme
 ├── styles/
@@ -55,6 +56,7 @@ calendar-app/
 │   └── index.vue                    # Fetches entries (useFetch), renders CalendarView + dialogs
 ├── components/
 │   ├── CalendarView.vue             # Pure-display 7-col CSS grid monthly calendar
+│   ├── MonthOverviewBand.vue        # Pure-display 3-month booking overview band
 │   ├── AddEntryDialog.vue           # v-dialog to create entries (wraps EntryForm)
 │   ├── EditEntryDialog.vue          # v-dialog to edit/delete entries (wraps EntryForm)
 │   └── EntryForm.vue                # Shared form fields + client-side validation (defineModel)
