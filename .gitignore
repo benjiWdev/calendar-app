@@ -18,3 +18,7 @@ Thumbs.db
 
 # claude
 .claude/
+
+# Ai Factory
+.ai-factory/patches/
+.ai-factory/plans/

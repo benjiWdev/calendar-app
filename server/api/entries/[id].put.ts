@@ -1,4 +1,5 @@
 import { getPool } from '~/server/utils/db'
+import { findConflictingEntry, buildConflictMessage } from '~/server/utils/entryConflicts'
 import type { CalendarEntry, CreateEntryPayload } from '~/types'
 
 export default defineEventHandler(async (event): Promise<CalendarEntry> => {
@@ -26,6 +27,16 @@ export default defineEventHandler(async (event): Promise<CalendarEntry> => {
   }
 
   const pool = getPool()
+
+  const conflict = await findConflictingEntry(pool, {
+    startDate: body.start_date,
+    endDate: body.end_date,
+    elements: body.elements,
+    excludeId: id,
+  })
+  if (conflict) {
+    throw createError({ statusCode: 409, message: buildConflictMessage(conflict, body.elements) })
+  }
 
   const result = await pool.query(
     `UPDATE calendar_entries
