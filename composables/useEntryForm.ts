@@ -36,8 +36,11 @@ export function useEntryForm() {
   }
 
   function extractErrorMessage(err: unknown, fallback: string): string {
+    const data = (err as { data?: { message?: string; statusMessage?: string } })?.data
+    if (data?.message) return data.message
+    if (data?.statusMessage) return data.statusMessage
     if (err instanceof Error) return err.message
-    return (err as { data?: { message?: string } })?.data?.message ?? fallback
+    return fallback
   }
 
   return { form, loading, errorMsg, resetForm, toISODate, extractErrorMessage }
